@@ -1,0 +1,26 @@
+*{
+	background-color: #fff;
+	padding: 0px;
+	margin: 0px;
+}
+
+#mainDiv{
+	width: 300px;
+	height: 300px;
+	border: 2px solid #000;
+}
+
+.div{
+	width: 98px;
+	height: 98px;
+	border: 2px solid #000;
+	position: absolute;
+}
+
+.text{
+	font-size: 62pt;
+	left: 17px;
+	position: absolute;
+	display: none;
+	font-family: sans-serif;
+}
