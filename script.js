@@ -33,4 +33,4 @@ function draw() {
 		dy*= document.getElementById("a").value / Math.abs(dy);}
 }
 
-setInterval(draw, 10);
+setInterval(draw, 10);//fwd
