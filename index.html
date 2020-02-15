@@ -1,57 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<title>game</title>
 	<style type="text/css">
 *{
 	background-color: #fff;
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 }
 
 canvas { background: #eee; display: block; margin: 0 auto;}
 	</style>
 </head>
 <body>
-	<canvas id="myCanvas" width="480" height="320"></canvas>
-	<input type="number" name="ews" id="a" style="width: 30px; border-color:red;">
+	<canvas id="myCanvas" width="960" height="480"></canvas>
 	<script type="text/javascript">
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-var x = canvas.width/2;
-var y = canvas.height-30;
-var dx = 2;
-var dy = -2;
+function print(x){console.log(x);}
+function random(min,max) {
+	a = toString(max).length;
+	return Math.ceil(Math.ceil(Math.random()*(10**a))* (max/(10**a)));
+}
+//-------------------------
+class Control{
+	constructor(){
+		this.up = false;
+		this.right = false;
+		this.down = false;
+		this.left = false;
+		this.fire = false;
+		this.keyMap = new Map([
+			[65,'left'],[68,'right'],[87,'up'],[83,'down'],[32,'fire']
+			])
+		document.addEventListener('keydown',(event) => this.update(event,true));
+		document.addEventListener('keyup',(event) => this.update(event,false));
+	}
 
-function drawBall() {
-    ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI*2);
-    ctx.fillStyle = "#0095DD";
-    ctx.fill();
-    ctx.closePath();
+	update(event,pressed){
+		if(this.keyMap.has(event.keyCode)){
+			event.preventDefault();
+			event.stopPropagation();
+			this[this.keyMap.get(event.keyCode)] = pressed;
+		}
+	}
 }
 
-function colisionCheck(){
-	if (x > canvas.width || x < 0){
-		dx*= -1;
+//--------------------------------------------------------------------------------
+class Ground{//background class
+	constructor(src, x, y){
+		this.ground = new Image();
+		this.ground.src = src;
+        this.flowers = [];
+        this.pFlowerCount = (12 * 480* 0.1)/12;  //flowerCount / groundS = 10%
+		this.x = x;
+		this.y = y;
+		this.decorationGenerate('flower',this.pFlowerCount);
 	}
-	if (y > canvas.height || y < 0){
-		dy*= -1;
+
+	move(dx = 0,dy = 0){//dx - offset x, dy - offset y
+		this.x+=dx;
+		this.y+=dy;
+		this.flowersUpdate(dx,dy);
+		ctx.drawImage(this.ground,this.x,this.y)
+	}
+
+    decorationGenerate(type,Count){
+        for(let i = 0; i < random(1,Count); i++){
+            this.flowers.push(new Decoration(type,this.x,this.y));
+        }
+    }
+
+    flowersUpdate(dx,dy){
+        for (let i = 0; i < this.flowers.length; i++) {
+            this.flowers[i].update(dx,dy);
+        }
+    }
+
+	setPosition(x,y){
+		this.x = x;
+		this.y = y;
+		ctx.drawImage(this.ground,this.x,this.y);
 	}
 }
 
+class Decoration{
+	constructor(type,x,y){
+		this.x = random(x,x+480);
+		this.y = random(y,y+480);
+		this.img = new Image();
+		this.img.src = 'assets/sprites/decorations/' + type + random(1,4) + '.png';
+	}
+
+	update(dx,dy){
+        /*switch(direction){
+            case 'top':
+                this.y+=speed;
+                break;
+            case 'bottom':
+                this.y-=speed;
+                break;
+            case 'right':
+                this.x-=speed;
+                break;
+            case 'left':
+                this.x+=speed;
+                break;
+        }*/
+        this.x+=dx;
+        this.y+=dy;
+		ctx.drawImage(this.img,this.x,this.y);
+	}
+}
+
+class World{
+	constructor(src){
+		this.world = [];
+		for (let i = 0; i < 3*4; i++) {
+			let x = i * 480;
+			let y = Math.floor(i/4)*480;
+			x-= 4*y;
+			x-= 480;
+			y-=480;
+			this.world.push(new Ground(src, x, y));
+		}
+	}
+
+	worldMove(dx,dy){
+		for (let i = 0; i < this.world.length; i++) {
+            this.world[i].move(dx, dy);
+            if (this.world[i].x < -480) {
+                this.world[i].move(4 * 480, 0);//move right
+            }
+            if (this.world[i].x > (3 * 480)) {
+                this.world[i].move(4 * -480, 0);//move left
+            }
+            if (this.world[i].y < -480) {
+                this.world[i].move(0, 3 * 480);//move down
+            }
+            if (this.world[i].y > 2 * 480) {
+                this.world[i].move(0, -3 * 480);//move up
+            }
+        }
+	}
+}
+
+class Bullet{
+	constructor(direction){
+		this.img = new Image();
+		this.x = 960/2 - 8;
+		this.y = 480/2 - 4;
+		this.bulletActive = false;
+		this.direction = direction;
+		this.distation = 0;
+	}
+
+	update(speed,frame){
+		if(this.direction === player.rotation){this.a = -player.currentSpeed;}
+		else{this.a = player.currentSpeed;}
+		switch(this.direction){
+			case 'top':
+				this.y-=speed+this.a;
+				break;
+			case 'bottom':
+				this.y+=speed+this.a;
+				break;
+			case 'right':
+				this.x+=speed+this.a;
+				break;
+			case 'left':
+				this.x-=speed+this.a;
+				break;
+		}
+		this.distation+= speed;
+		if((frame+10)%50<25){this.img.src = 'assets/sprites/player/fire/fire1.png';}
+		else{this.img.src = 'assets/sprites/player/fire/fire2.png';}
+		ctx.drawImage(this.img,this.x,this.y);
+	}
+}
+
+class Player{
+	constructor(){
+		this.controller = new Control();
+		this.img = new Image();
+		this.frame = 0;
+		this.rotation = 'bottom';
+		this.speed = 2;
+		this.currentSpeed = 0;
+		this.bullet = [new Bullet(this.rotation)];
+		this.bullet.splice(0,0);
+		this.bulletCooldown = 0;
+	}
+
+	update(){
+		this.currentSpeed = 0;
+		this.img.src = 'assets/sprites/player/'+this.rotation+'1.png';
+		if (this.controller.up){
+			world.worldMove(0,this.speed);
+			this.currentSpeed = this.speed;
+			this.rotation = 'top';
+			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
+			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
+		}
+		if (this.controller.down){
+			world.worldMove(0,-this.speed);
+			this.currentSpeed = this.speed;
+			this.rotation = 'bottom';
+			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
+			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
+		}
+		if (this.controller.right){
+			world.worldMove(-this.speed,0);
+			this.currentSpeed = this.speed;
+			this.rotation = 'right';
+			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
+			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
+		}	
+		if (this.controller.left){
+			world.worldMove(this.speed,0);
+			this.currentSpeed = this.speed;
+			this.rotation = 'left';
+			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
+			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
+		}
+		if(this.controller.fire){
+			if(this.bulletCooldown <= 0){
+			this.bullet.push(new Bullet(this.rotation));
+			this.bullet[this.bullet.length-1].bulletActive = true;
+			this.bulletCooldown = 100;
+			}
+		}
+		ctx.clearRect(-480,-480,960+480,480*2);
+		world.worldMove(0,0);
+		ctx.drawImage(this.img,960/2 - 40,480/2 - 30);
+		this.frame++;
+		this.bulletCooldown--;
+		this.fire();
+	}
+
+	fire(){
+		for (let i = 0; i < this.bullet.length; i++) {
+			if(this.bullet[i].bulletActive){
+				this.bullet[i].update(5,this.frame);
+				if(this.bullet[i].distation > 400){
+					this.bullet.splice(i,i);
+				}
+			}
+		}
+	}
+}
+
+var player = new Player();
+var world = new World("assets/sprites/ground.jpg");
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBall();
-    x += dx;
-    y += dy;
-    colisionCheck();
-    if ( document.getElementById("a").value > 0){
-		dx*= document.getElementById("a").value / Math.abs(dx);
-		dy*= document.getElementById("a").value / Math.abs(dy);}
+	player.update();
 }
-
-setInterval(draw, 10);//fwd
-	</script>
+setInterval(draw, 10);
+</script>
 </body>
 </html>
