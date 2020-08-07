@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 	<title>game</title>
 	<style type="text/css">
 *{
-	background-color: #fff;
+	background-color: #2c2c2c;
 	padding: 0;
 	margin: 0;
 }
@@ -15,12 +15,13 @@ canvas { background: #eee; display: block; margin: 0 auto;}
 <body>
 	<canvas id="myCanvas" width="960" height="480"></canvas>
 	<script type="text/javascript">
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
+let canvas = document.getElementById("myCanvas");
+let ctx = canvas.getContext("2d");
 function print(x){console.log(x);}
-function random(min,max) {
-	a = toString(max).length;
-	return Math.ceil(Math.ceil(Math.random()*(10**a))* (max/(10**a)));
+function random(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 //-------------------------
 class Control{
@@ -32,7 +33,7 @@ class Control{
 		this.fire = false;
 		this.keyMap = new Map([
 			[65,'left'],[68,'right'],[87,'up'],[83,'down'],[32,'fire']
-			])
+			]);
 		document.addEventListener('keydown',(event) => this.update(event,true));
 		document.addEventListener('keyup',(event) => this.update(event,false));
 	}
@@ -46,70 +47,100 @@ class Control{
 	}
 }
 
+/*let colliders = [];
+class Collider{
+	constructor(x1,y1,x2,y2){
+		this.id = colliders.length;
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
+		colliders.push({
+			x1: this.x1,
+			x2: this.x2,
+			y1: this.y1,
+			y2: this.y2
+		})
+	}
+
+	update(dx,dy){
+		this.x2 = dx;
+		this.x1 = dx;
+		this.y2 = dy;
+		this.y1 = dy;
+		for(let i = 0;i < colliders.length;i++){
+			if (this.id !== i) {
+				if (this.x1 > colliders[i].x1 && this.x1 < colliders[i].x2 && this.y1 > colliders[i].y1 && this.y1 < colliders[i].y2) {//left-top corner
+					return true;
+				}
+				if (this.x2 > colliders[i].x1 && this.x2 < colliders[i].x2 && this.y1 > colliders[i].y1 && this.y1 < colliders[i].y2) {//right-top corner
+					return true;
+				}
+				if (this.x1 > colliders[i].x1 && this.x1 < colliders[i].x2 && this.y2 > colliders[i].y1 && this.y2 < colliders[i].y2) {//left-bottom corner
+					return true;
+				}
+				if (this.x2 > colliders[i].x1 && this.x2 < colliders[i].x2 && this.y2 > colliders[i].y1 && this.y2 < colliders[i].y2) {//right-bottom corner
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+}*/
 //--------------------------------------------------------------------------------
-class Ground{//background class
-	constructor(src, x, y){
-		this.ground = new Image();
-		this.ground.src = src;
-        this.flowers = [];
-        this.pFlowerCount = (12 * 480* 0.1)/12;  //flowerCount / groundS = 10%
+class Decoration{
+	constructor(type,x,y){ //type - "flower","tree"
+		this.type = type;
 		this.x = x;
 		this.y = y;
-		this.decorationGenerate('flower',this.pFlowerCount);
+		this.img = new Image();
+		if(type === "flower") this.img.src = "assets/sprites/decorations/"+type+random(1,4)+".png";
+		if(type === "tree") this.img.src = "assets/sprites/decorations/tree1.png";
+	}
+
+	update(x,y){
+		ctx.drawImage(this.img,this.x + x,this.y + y);
+	}
+}
+
+class DecorationsGenerator{
+	constructor(flowersCount,treesCount/*.....*/) {
+		//---------------
+		this.decorations = [];
+		for (let i = 0; i < flowersCount; i++) {
+			this.decorations.push(new Decoration("flower", random(0, 480), random(0, 480)));
+		}
+		if (treesCount > 0){
+			this.decorations.push(new Decoration("tree", random(0, 320), random(0, 200)));
+			for (let i = 1; i < treesCount; i++) {
+				this.decorations.push(new Decoration("tree", random(0, 320), random(this.decorations[i - 1].y, 200)));
+			}
+		}
+	}
+	update(x,y){
+		for(let i = 0; i < this.decorations.length;i++){
+			this.decorations[i].update(x,y);
+		}
+	}
+}
+
+class Ground{//background class
+
+	constructor(src, x, y){
+		this.x = x;
+		this.y = y;
+		this.ground = new Image();
+		this.ground.src = src;
+		this.decorations = new DecorationsGenerator(random(1,9),random(-3,2));
 	}
 
 	move(dx = 0,dy = 0){//dx - offset x, dy - offset y
 		this.x+=dx;
 		this.y+=dy;
-		this.flowersUpdate(dx,dy);
-		ctx.drawImage(this.ground,this.x,this.y)
-	}
-
-    decorationGenerate(type,Count){
-        for(let i = 0; i < random(1,Count); i++){
-            this.flowers.push(new Decoration(type,this.x,this.y));
-        }
-    }
-
-    flowersUpdate(dx,dy){
-        for (let i = 0; i < this.flowers.length; i++) {
-            this.flowers[i].update(dx,dy);
-        }
-    }
-
-	setPosition(x,y){
-		this.x = x;
-		this.y = y;
 		ctx.drawImage(this.ground,this.x,this.y);
 	}
-}
-
-class Decoration{
-	constructor(type,x,y){
-		this.x = random(x,x+480);
-		this.y = random(y,y+480);
-		this.img = new Image();
-		this.img.src = 'assets/sprites/decorations/' + type + random(1,4) + '.png';
-	}
-
-	update(dx,dy){
-        /*switch(direction){
-            case 'top':
-                this.y+=speed;
-                break;
-            case 'bottom':
-                this.y-=speed;
-                break;
-            case 'right':
-                this.x-=speed;
-                break;
-            case 'left':
-                this.x+=speed;
-                break;
-        }*/
-        this.x+=dx;
-        this.y+=dy;
-		ctx.drawImage(this.img,this.x,this.y);
+	updateDecorations(){
+		this.decorations.update(this.x,this.y);
 	}
 }
 
@@ -128,22 +159,31 @@ class World{
 
 	worldMove(dx,dy){
 		for (let i = 0; i < this.world.length; i++) {
-            this.world[i].move(dx, dy);
-            if (this.world[i].x < -480) {
-                this.world[i].move(4 * 480, 0);//move right
-            }
-            if (this.world[i].x > (3 * 480)) {
-                this.world[i].move(4 * -480, 0);//move left
-            }
-            if (this.world[i].y < -480) {
-                this.world[i].move(0, 3 * 480);//move down
-            }
-            if (this.world[i].y > 2 * 480) {
-                this.world[i].move(0, -3 * 480);//move up
-            }
-        }
+			this.world[i].move(dx, dy);
+			if (this.world[i].x < -480) {
+				this.world[i].move(4 * 480, 0);//move right
+				this.world[i].decorations = new DecorationsGenerator(random(1,9),random(1,2));
+			}
+			if (this.world[i].x > (3 * 480)) {
+				this.world[i].move(4 * -480, 0);//move left
+				this.world[i].decorations = new DecorationsGenerator(random(1,9),random(1,2));
+			}
+			if (this.world[i].y < -480) {
+				this.world[i].move(0, 3 * 480);//move down
+				this.world[i].decorations = new DecorationsGenerator(random(1,9),random(1,2));
+			}
+			if (this.world[i].y > 2 * 480) {
+				this.world[i].move(0, -3 * 480);//move up
+				this.world[i].decorations = new DecorationsGenerator(random(1,9),random(1,2));
+			}
+		}
+		for(let i = 0; i < this.world.length; i++){
+			this.world[i].updateDecorations();
+		}
 	}
 }
+
+let world = new World("assets/sprites/ground (2).jpg");
 
 class Bullet{
 	constructor(direction){
@@ -156,22 +196,22 @@ class Bullet{
 	}
 
 	update(speed,frame){
-		if(this.direction === player.rotation){this.a = -player.currentSpeed;}
-		else{this.a = player.currentSpeed;}
-		switch(this.direction){
+		switch(this.direction){ // opt
 			case 'top':
-				this.y-=speed+this.a;
+				this.y-=speed;
 				break;
 			case 'bottom':
-				this.y+=speed+this.a;
+				this.y+=speed;
 				break;
 			case 'right':
-				this.x+=speed+this.a;
+				this.x+=speed;
 				break;
 			case 'left':
-				this.x-=speed+this.a;
+				this.x-=speed;
 				break;
 		}
+		this.x-=player.dx;
+		this.y-=player.dy;
 		this.distation+= speed;
 		if((frame+10)%50<25){this.img.src = 'assets/sprites/player/fire/fire1.png';}
 		else{this.img.src = 'assets/sprites/player/fire/fire2.png';}
@@ -190,15 +230,20 @@ class Player{
 		this.bullet = [new Bullet(this.rotation)];
 		this.bullet.splice(0,0);
 		this.bulletCooldown = 0;
+		this.dx = 0;
+		this.dy = 0;
 	}
 
 	update(){
 		this.currentSpeed = 0;
+		this.dx	= 0;
+		this.dy = 0;
 		this.img.src = 'assets/sprites/player/'+this.rotation+'1.png';
 		if (this.controller.up){
 			world.worldMove(0,this.speed);
 			this.currentSpeed = this.speed;
 			this.rotation = 'top';
+			this.dy = -this.currentSpeed;
 			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
 			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
 		}
@@ -206,20 +251,23 @@ class Player{
 			world.worldMove(0,-this.speed);
 			this.currentSpeed = this.speed;
 			this.rotation = 'bottom';
+			this.dy = this.currentSpeed;
 			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
 			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
-		}
+			}
 		if (this.controller.right){
 			world.worldMove(-this.speed,0);
 			this.currentSpeed = this.speed;
 			this.rotation = 'right';
+			this.dx = this.currentSpeed;
 			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
 			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
-		}	
+			}
 		if (this.controller.left){
 			world.worldMove(this.speed,0);
 			this.currentSpeed = this.speed;
 			this.rotation = 'left';
+			this.dx = -this.currentSpeed;
 			if(this.frame%50 < 25){this.img.src = 'assets/sprites/player/'+this.rotation+'2.png';}
 			else{this.img.src = 'assets/sprites/player/'+this.rotation+'3.png';}
 		}
@@ -250,12 +298,10 @@ class Player{
 	}
 }
 
-var player = new Player();
-var world = new World("assets/sprites/ground.jpg");
-function draw() {
+let player = new Player();
+function update(){
 	player.update();
 }
-setInterval(draw, 10);
-</script>
+setInterval(player.update, 10);</script>
 </body>
 </html>

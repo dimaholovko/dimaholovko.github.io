@@ -1,0 +1,159 @@
+<html lang="none" style="margin: 0; padding: 0;">
+<head>
+    <title>Симулятор низших существ</title>
+    <meta charset="UTF-8">
+</head>
+<body style="padding: 0; margin: 0;background-color: white;text-align: left;">
+<canvas id="canvas" width="1200" height="600" style="border: 2px solid black;"></canvas>
+<br>
+<button style="margin-left: 10px;">Начать симуляцию</button>
+<p style="margin-left: 10px;">Шаблон тела</p>
+<form style="margin-left: 10px;">
+    <input type="radio" name="a" aria-label="Ромбовидний"><span>Ромбовидний</span><br>
+    <input type="text" name="b" aria-label="Свой"><a href="bodepatern.html"> Создать свой</a>
+</form>
+
+<script type="text/javascript">
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+/*function inRange(min,max,value) {
+    return min <= max < value;
+}*/
+function random(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+class Matrix{
+    constructor(){
+        this.toDraw = [];
+    }
+
+    begin(){
+        ctx.clearRect(0, 0, 1200, 600);
+        this.toDraw = [];
+    }
+
+    drawDot(x,y,color,doNow = false){
+        if(doNow){
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+        }
+        else{
+            this.toDraw.push([x,y,1,1,color]);
+        }
+    }
+
+    end(){
+       for (let i = 0; i < this.toDraw; i++){
+           ctx.fillStyle(this.toDraw[4]);
+           ctx.fillRect(this.toDraw[0],this.toDraw[1],this.toDraw[2],this.toDraw[3]);
+       }
+    }
+}
+
+class DNA{
+    constructor(len,value = null){
+        this.gens = new Map([
+            [0,"body"],[1,"chlorophyll"],[2,"storage"],[3,"fall"],[4,"filter"],[5,"spikes"],[6,"accelerator"],[7,"none"]
+        ]);
+        this.dna = [];
+        if(value == null){
+            for(let i = 0; i < len; i++) {
+                let rand = random(0,7);
+                this.dna.push(rand);
+            }
+        }
+        else{
+            this.dna = value;
+        }
+    }
+    edit(index,value){
+
+    }
+}
+
+class Protein{
+    constructor(type,dx,dy){
+        this.dx = 0;
+        this.dy = 0;
+        this.type = type;
+        this.proteins = new Map([
+            ["body",["#3a3a3a",30]],["chlorophyll",["#14b300",50]],["storage",["#8a8a8a",20]],["fall",["#ff0e0c",35]],["filter",["#0d00ff",30]],
+            ["spikes",["#dcdf74",40]], ["accelerator",["#9301ff",45]],["none",["#eee",0]],["DNA",["#000",0]]
+        ]);
+        this.color = this.proteins.get(this.type)[0];
+    }
+
+    static pGet(key){
+        return this.proteins.get(key);
+    }
+}
+
+class Object{
+    constructor(dnaLen,startX,startY,id,isFirst = false){
+        if(isFirst) this.dna = new DNA(dnaLen);
+        else this.dna = new DNA(dnaLen);
+        this.dnaId = 0;
+        this.elements = [new Protein("DNA")];
+        this.energy = 500;
+        this.x = startX;
+        this.y = startY;
+        this.rotation = 0;
+        this.id = id;
+        this.vector = 0;
+        this.force = 0;
+    }
+
+    update(){
+
+    }
+
+    energyMining(){
+
+    }
+
+    grow(){
+        if(this.energy >= Protein.pGet(this.dna[this.dnaId])[1]){
+            this.element.push(new Protein(this.dna[this.dnaId],0,0));
+
+            this.dnaId++;
+            this.energy-= Protein.pGet(this.dna[this.dnaId])[1];
+        }
+    }
+}
+
+class Population{
+    constructor(startSize,dnaLen){
+        this.objects = [];
+        this.size = startSize;
+        for(let i = 0; i < this.size;i++){
+            let x = 0;
+            let y = 0;
+            let done = 0;
+            while(done !== this.objects.length){
+                done = 0;
+                x = random(0,1200);
+                y = random(0,600);
+                for(let i = 0; i < this.objects.length; i++){
+                    if(!(this.objects[i].x - 8 < x < this.objects[i].x + 8 && this.objects[i].y - 8 < y < this.objects[i].x + 8)) done++;
+                }
+            }
+            this.objects.push(new Object(dnaLen,x,y,this.objects.length));
+        }
+    }
+}
+
+class Engine{
+    constructor(startSize,dnaLen){
+        this.matrix = new Matrix();
+        this.population = new Population(startSize,dnaLen);
+    }
+
+
+}
+//Dna len  = 144
+function update(){
+}
+setInterval(update, 10);
+</script></body></html>

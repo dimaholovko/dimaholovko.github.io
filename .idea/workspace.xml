@@ -11,14 +11,39 @@
   <component name="FavoritesManager">
     <favorites_list name="dimaholovko.github.io" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="ADD_SUFFIX_TO_CHERRY_PICKS_OF_PUBLISHED_COMMITS" value="false" />
+    <option name="PREVIEW_PUSH_ON_COMMIT_AND_PUSH" value="false" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="WARN_ABOUT_CRLF" value="false" />
+    <option name="WARN_ABOUT_DETACHED_HEAD" value="false" />
   </component>
   <component name="ProjectId" id="1XlUMiWZhU79hnqKjrXA0v7MuoB" />
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/simulation" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Dima\Documents\GitHub\dimaholovko.github.io\simulation" />
+      <recent name="C:\Users\Dima\Documents\GitHub\dimaholovko.github.io\alex" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Dima\Documents\GitHub\dimaholovko.github.io" />
+      <recent name="C:\Users\Dima\Documents\GitHub\dimaholovko.github.io\simulation" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -44,7 +69,39 @@
       <updated>1581620128373</updated>
       <workItem from="1581620129821" duration="3304000" />
       <workItem from="1581673353504" duration="5812000" />
-      <workItem from="1581755509206" duration="10833000" />
+      <workItem from="1581755509206" duration="13765000" />
+      <workItem from="1582115821258" duration="2834000" />
+      <workItem from="1582140420929" duration="607000" />
+      <workItem from="1582209773527" duration="2590000" />
+      <workItem from="1582374532704" duration="186000" />
+      <workItem from="1582982755878" duration="8421000" />
+      <workItem from="1583065411157" duration="18511000" />
+      <workItem from="1583237966144" duration="14811000" />
+      <workItem from="1583342491885" duration="4905000" />
+      <workItem from="1583434206557" duration="11104000" />
+      <workItem from="1583492921748" duration="5676000" />
+      <workItem from="1583516836676" duration="5119000" />
+      <workItem from="1583946542663" duration="579000" />
+      <workItem from="1584050044363" duration="723000" />
+      <workItem from="1586264827881" duration="612000" />
+      <workItem from="1586265448229" duration="10158000" />
+      <workItem from="1586367034891" duration="2712000" />
+      <workItem from="1586421657698" duration="4489000" />
+      <workItem from="1586681097790" duration="6629000" />
+      <workItem from="1586709599511" duration="33000" />
+      <workItem from="1586796771106" duration="10346000" />
+      <workItem from="1586930410271" duration="7932000" />
+      <workItem from="1587132249153" duration="1710000" />
+      <workItem from="1587149301493" duration="6275000" />
+      <workItem from="1587460748081" duration="3794000" />
+      <workItem from="1587711544818" duration="9569000" />
+      <workItem from="1587837471698" duration="4629000" />
+      <workItem from="1588791255837" duration="595000" />
+      <workItem from="1588875149305" duration="5085000" />
+      <workItem from="1588923560949" duration="3383000" />
+      <workItem from="1589035206379" duration="2999000" />
+      <workItem from="1589128666821" duration="586000" />
+      <workItem from="1589298821889" duration="2276000" />
     </task>
     <servers />
   </component>
@@ -68,28 +125,45 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/index.html</url>
-          <line>128</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="4" />
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>26</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/index.html</url>
-          <line>115</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="9" />
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>75</line>
+          <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/index.html</url>
-          <line>86</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="10" />
+          <condition expression="DNA" language="HTML" />
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>92</line>
+          <option name="timeStamp" value="29" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/index.html</url>
-          <line>49</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="11" />
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>54</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>125</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/simulation/index.html</url>
+          <line>146</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/1d.html</url>
+          <line>79</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/1d.html</url>
+          <line>93</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

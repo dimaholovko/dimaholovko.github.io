@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Body Pattern Creator</title>
+</head>
+<body>
+<canvas width="475" height="475" id="canvas" style="border: 2px solid black;"></canvas>
+<script>
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+class Cell{
+    constructor(x,y){
+        this.x = x;
+        this.y = y;
+        this.size = 25;
+        this.number = -2;
+    }
+
+    update(){
+        ctx.fillRect(this.x,this.y,this.size,this.size);
+        if(this.number === -1) {
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(this.x+1,this.y+1,this.size-2,this.size-2);
+        }
+        else if(this.number === -2){
+            ctx.fillStyle = "#eee";
+            ctx.fillRect(this.x+1,this.y+1,this.size-2,this.size-2);
+        }
+        else {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(this.x+1,this.y+1,this.size-2,this.size-2);
+            ctx.fillStyle = "#fff";
+            ctx.font = "14px Arial";
+            ctx.fillText(toString(this.number),this.x,this.y);
+        }
+    }
+}
+
+class Matrix{
+    constructor(width, height){
+        this.size = [width, height];
+        this.cells = [];
+        for(let i = 0; i < (width*height)/(25*25);i++){
+            let y = Math.floor(i/19) * 25;
+            let x = i* 25 - i*25*y;
+            this.cells.push(new Cell(x,y));
+        }
+    }
+
+    update(){
+        for(let i = 0; i < this.cells.length; i++){
+            this.cells[i].update();
+        }
+        ctx.clearRect(this.size[0],this.size[1]);
+    }
+}
+
+let a = new Matrix(475,475);
+function update() {
+    a.update();
+}
+
+setInterval(update,10);
+</script>
+</body>
+</html>

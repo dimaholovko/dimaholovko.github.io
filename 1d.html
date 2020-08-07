@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1D Game</title>
+</head>
+<body>
+<canvas id="canvas" width="1200" height="600" style="border: 2px solid black;"></canvas>
+<script>
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+class Control{
+    constructor(){
+        this.up = false;
+        this.forward = false;
+        this.down = false;
+        this.back = false;
+        this.jump = false;
+        this.keyMap = new Map([
+            [87,'forward'],[83,'back'],[32,'jump'],[38,"up"],[40,"down"]
+        ]);
+        document.addEventListener('keydown',(event) => this.update(event,true));
+        document.addEventListener('keyup',(event) => this.update(event,false));
+    }
+
+    update(event,pressed){
+        if(this.keyMap.has(event.keyCode)){
+            event.preventDefault();
+            event.stopPropagation();
+            this[this.keyMap.get(event.keyCode)] = pressed;
+        }
+    }
+}
+
+class Object{
+    constructor(type,color,x,y,xsize,ysize = null) {
+        switch (type) {
+            case "block":
+                this.x = x;
+                this.y = y;
+                this.xsize = xsize;
+                this.ysize = ysize;
+                this.color = color;
+                break;
+        }
+    }
+
+    miniRender(mx,my,mSizeX,mSizeY){
+        ctx.fillStyle = this.color;
+        let x = mx+this.x*mSizeX/1200;
+        let y = my+this.y*mSizeY/600;
+        let sizeX = this.xsize*mSizeX/1200;
+        let sizeY = this.ysize*mSizeY/600;
+        if(x < mx){
+            sizeX -= mx - x;
+            x += mx - x;
+        }
+        if(y < my){
+            sizeY -= my - y;
+            y += my - y;
+        }
+        if(x + sizeX > mx + mSizeX){
+            sizeX -= mx + mSizeX - x;
+        }
+        if(y + sizeY > my + mSizeY){
+            sizeY -= my + mSizeY - y;
+        }
+        ctx.fillRect(x,y,sizeX,sizeY);   //1200-mSizeX x1 - ?
+    }
+}
+
+class Camera{
+    constructor(viewingAngle,viewingRange){
+        this.va = viewingAngle;
+        this.vr = viewingRange;
+
+    }
+}
+
+class Player{
+    constructor(x,y){
+        this.x = x;
+        this.y = y;
+        this.sizeX = 100;
+        this.sizeY = 200;
+        this.cam = new Camera();
+    }
+
+    miniRender(mx,my,mSizeX,mSizeY){
+        ctx.fillRect(mx+this.x*mSizeX/1200,my+this.y*mSizeY/600,this.sizeX*mSizeX/1200,this.sizeY*mSizeY/600);
+    }
+}
+
+class World{
+    constructor(mx,my,mSizeX,mSizeY){
+        this.objects = [];
+        this.player = new Player(200,300);
+        this.mx = mx;
+        this.my = my;
+        this.mSizeX = mSizeX;
+        this.mSizeY = mSizeY;
+    }
+
+    addObject(type,color,x,y,xsize,ysize = null){
+        this.objects.push(new Object(type,color,x,y,xsize,ysize));
+    }
+
+    minimapRender(){
+        ctx.fillRect(this.mx-2,this.my-2,this.mSizeX+4,this.mSizeY+4);
+        ctx.clearRect(this.mx,this.my,this.mSizeX,this.mSizeY);
+        for(let i = 0; i < this.objects.length;i++){
+            this.objects[i].miniRender(this.mx,this.my,this.mSizeX,this.mSizeY);
+        }
+        this.player.miniRender(this.mx,this.my,this.mSizeX,this.mSizeY);
+    }
+
+    update(){
+        ctx.clearRect(0,0,1200,600);
+        this.minimapRender();
+    }
+}
+
+let world = new World(990,490,200,100);
+world.addObject("block","#000",700,500,200,100);
+function update(){
+    world.update();
+}
+setInterval(update, 10);
+</script>
+</body>
+</html>

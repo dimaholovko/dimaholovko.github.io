@@ -1,0 +1,18 @@
+#menu{
+    text-align: left;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: gainsboro;
+    padding: 5px;
+    float: right;
+    width: 71px;
+    height: auto;
+}
+
+#canvas{
+    text-align: left;
+    float: left;
+    border: 10px gainsboro solid;
+    border-radius: 5px;
+    background-color: white;
+}
